@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import './style.css?v=20261026-57';
+import './style.css?v=20261026-58';
 import CircularCarousel from './CircularCarousel';
 import opening01 from './assets/hero/opening-01.jpg';
 import opening02 from './assets/hero/opening-02.jpg';
