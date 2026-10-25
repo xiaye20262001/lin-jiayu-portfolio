@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import './style.css?v=20261026-56';
+import './style.css?v=20261026-57';
 import CircularCarousel from './CircularCarousel';
 import opening01 from './assets/hero/opening-01.jpg';
 import opening02 from './assets/hero/opening-02.jpg';
@@ -159,7 +159,7 @@ const cyanotypeProject = {
   images: [cyanotypeJapanExchangeCover, ...cyanotypePhotos],
 };
 const chainsGallery = teachingGallery('chains');
-const chainsPhotos = [chainsGallery[3], chainsGallery[8], chainsGallery[4], chainsGallery[6], chainsGallery[7]];
+const chainsPhotos = chainsGallery;
 
 const teachingProjects = {
   '02': cyanotypeProject,
