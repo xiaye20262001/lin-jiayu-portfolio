@@ -208,6 +208,7 @@ const innovationCertificates = [
 
 function App() {
   const [selected, setSelected] = useState(null);
+  const [coverOpen, setCoverOpen] = useState(true);
   const [educationOpen, setEducationOpen] = useState(false);
   const [projectsOpen, setProjectsOpen] = useState(false);
   const [teachingOpen, setTeachingOpen] = useState(false);
@@ -225,8 +226,24 @@ function App() {
 
 
 
+  const enterResume = () => {
+    setCoverOpen(false);
+    window.setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 80);
+  };
+
   return (
     <div className="app-motion-root">
+      {coverOpen && <section className="rita-cover" aria-label="个人简历封面">
+        <div className="rita-cover__face rita-cover__front">
+          <p>LIN JIAYU / PORTFOLIO</p>
+          <h1>Hi, I’m Rita.</h1>
+          <span>文化项目运营 · 公共美育 · 艺术管理</span>
+          <button onClick={enterResume}>进入简历 <b>↗</b></button>
+        </div>
+        <div className="rita-cover__face rita-cover__edge" aria-hidden="true">
+          <span>RITA · PORTFOLIO · 2026</span>
+        </div>
+      </section>}
       <header className="nav">
         <a className="brand" href="#top" aria-label="首页">
           <span className="brand-mark">LJY</span>
