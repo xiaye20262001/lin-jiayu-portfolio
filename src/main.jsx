@@ -1,6 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { createRoot } from 'react-dom/client';
-import './style.css?v=20261026-58';
+import './style.css?v=20261026-60';
+
+gsap.registerPlugin(ScrollTrigger);
 import CircularCarousel from './CircularCarousel';
 import opening01 from './assets/hero/opening-01.jpg';
 import opening02 from './assets/hero/opening-02.jpg';
@@ -164,7 +168,7 @@ const chainsPhotos = chainsGallery;
 const teachingProjects = {
   '02': cyanotypeProject,
   '03': { no: '03', type: '901 欢乐农场菜园美术馆', title: '指尖造柿', subtitle: '扭扭棒手作工作坊', role: '独立策划 · 主讲 · 现场组织', desc: '围绕秋日自然观察与材料体验开展的扭扭棒手作课程。负责课程策划、材料准备、现场讲解与参与者创作引导。', tags: ['课程策划', '材料体验', '现场主讲'], cover: persimmonPoster, images: farmSections[2].images },
-  '04': { no: '04', type: '宝山区文化场馆', title: '串链青春系列手作工坊', subtitle: '色彩搭配与创意手链制作', role: '项目策划 · 现场主持 · 主讲', desc: '在宝山区文化场馆落地同名工坊，负责项目策划、现场主持与主讲，带领参与者完成创意手链，并把控现场节奏与参与体验。', tags: ['项目策划', '色彩搭配', '现场主持'], cover: chainsPhotos[0], images: chainsPhotos },
+  '04': { no: '04', type: '宝山区文化场馆', title: '串链青春系列手作工坊', subtitle: '色彩搭配与创意手链制作', role: '项目策划 · 现场主持 · 主讲', desc: '在宝山区文化场馆落地同名工坊，负责项目策划、现场主持与主讲，带领参与者完成创意手链，并把控现场节奏与参与体验。', tags: ['项目策划', '色彩搭配', '现场主持'], cover: chainsPhotos[0], images: chainsPhotos.slice(1) },
   '01': { no: '01', type: '上海向东中学 × 中国近现代新闻出版博物馆', title: '一个展览的诞生——普希金文学之旅', subtitle: '博物馆公共教育 · 展览策划主题课程', role: '课程讲师 · 青少年课程开发 · 现场教学执行', desc: '在《一个展览的诞生——普希金文学之旅》项目中担任讲师，面向上海市向东中学中学生，主讲《博物馆公共教育：让展品“说话”》与展览策划两大主题课程；联合中国近现代新闻出版博物馆落地系列文博美育课程，结合文学叙事、展品观察与策展实践，培养学生的文化理解与表达能力。', tags: ['博物馆公教', '课程开发', '青少年美育'], images: teachingGallery('exhibition-birth') },
 };
 
@@ -206,6 +210,7 @@ const innovationCertificates = [
 ];
 
 function App() {
+  const appRef = useRef(null);
   const [selected, setSelected] = useState(null);
   const [educationOpen, setEducationOpen] = useState(false);
   const [projectsOpen, setProjectsOpen] = useState(false);
@@ -222,8 +227,32 @@ function App() {
     return () => { document.body.style.overflow = ''; };
   }, [selected]);
 
+  useLayoutEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
+    const ctx = gsap.context(() => {
+      const intro = gsap.timeline({ defaults: { ease: 'power4.out' } });
+      intro
+        .from('.nav', { yPercent: -110, opacity: 0, duration: 1.25, delay: 0.2 })
+        .from('.opening-label span', { yPercent: 140, opacity: 0, stagger: 0.16, duration: 1.25 }, '-=0.78')
+        .from('.opening-cylinder', { scale: 0.66, rotateX: 20, y: 80, opacity: 0, duration: 1.85, ease: 'expo.out' }, '-=0.95')
+        .from('.opening-intro', { y: 26, opacity: 0, duration: 0.9 }, '-=0.72');
+      gsap.from('.hero-content > *', { yPercent: 125, scaleY: 1.16, opacity: 0, transformOrigin: '0 100%', stagger: 0.14, duration: 1.25, ease: 'power4.out', scrollTrigger: { trigger: '.hero', start: 'top 60%' } });
+      gsap.from('.hero-photo-orb', { clipPath: 'inset(50% 0 50% 0 round 50%)', scale: 1.35, duration: 1.55, ease: 'power4.inOut', scrollTrigger: { trigger: '.hero', start: 'top 65%' } });
+      gsap.utils.toArray('main > section').forEach((section) => {
+        const heading = section.querySelector('h2');
+        const label = section.querySelector('.section-label');
+        if (heading) gsap.from(heading, { xPercent: -24, yPercent: 50, scaleX: 0.72, transformOrigin: '0 100%', opacity: 0, duration: 1.35, ease: 'power4.out', scrollTrigger: { trigger: section, start: 'top 72%', once: true } });
+        if (label) gsap.from(label, { y: 36, opacity: 0, duration: 0.8, ease: 'power3.out', scrollTrigger: { trigger: section, start: 'top 76%', once: true } });
+      });
+      gsap.utils.toArray('.hero-photo-orb img, .avatar-frame').forEach((image) => {
+        gsap.to(image, { yPercent: -7, ease: 'none', scrollTrigger: { trigger: image, start: 'top bottom', end: 'bottom top', scrub: 1.15 } });
+      });
+    }, appRef);
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <>
+    <div ref={appRef} className="app-motion-root">
       <header className="nav">
         <a className="brand" href="#top" aria-label="首页">
           <span className="brand-mark">LJY</span>
@@ -295,7 +324,7 @@ function App() {
             </div>
           </div>
           <div className="stats">
-            {[['27','公共美育实践','含策划主讲、协助执行'],['07','展览项目','含策划、主讲、协助执行'],['05','学术成果','点击查看研究输出'],['04','知识产权成果','专利与著作权'],['04','创新创业项目','实践与竞赛成果']].map(([number,label,detail], index) => <button className={activeStat === index ? 'is-active' : ''} key={label} onClick={() => setActiveStat(activeStat === index ? null : index)}><span className="stat-front"><b>{number}</b><span>{label}</span></span><span className="stat-back">{detail}<i>↗</i></span></button>)}
+            {[['27','公共美育实践','含策划主讲、协助执行'],['07','展览项目','含策划、主讲、协助执行'],['05','学术成果','点击查看研究输出'],['04','知识产权成果','专利与著作权'],['08','创新创业项目','实践与竞赛成果']].map(([number,label,detail], index) => <button className={activeStat === index ? 'is-active' : ''} key={label} onClick={() => setActiveStat(activeStat === index ? null : index)}><span className="stat-front"><b>{number}</b><span>{label}</span></span><span className="stat-back">{detail}<i>↗</i></span></button>)}
           </div>
         </section>
 
@@ -317,7 +346,7 @@ function App() {
               <div className="section-label"><span>03</span> FEATURED WORK</div>
               <div><h2>展览与<br /><em>文化项目</em></h2><p>从策划统筹、现场执行到公共教育与传播，完整参与文化项目的落地过程。</p><small>{projectsOpen ? 'CLOSE FOLDER' : 'OPEN PROJECT FOLDER / 点击打开项目档案'} ↗</small></div>
             </button>
-            {projectsOpen && <div className="project-list">
+            {projectsOpen && <div className="project-list motion-stagger">
               {projects.map((project) => (
                 <button className={`project-card project-${project.no} ${project.accent}`} key={project.no} onClick={() => setSelected(project)}>
                   <div className={`project-visual ${project.image ? 'project-visual-photo' : ''}`}>
@@ -342,7 +371,7 @@ function App() {
             <div className="section-label"><span>04</span> PUBLIC ART EDUCATION</div>
             <div><h2>公共美育，<br /><em>让参与发生。</em></h2><p>从课程研发到现场组织，面向少儿、社区大众与中学生，设计有参与感的艺术学习体验。</p><small>{teachingOpen ? 'CLOSE FOLDER' : 'OPEN PROGRAM FOLDER / 点击打开课程档案'} ↗</small></div>
           </button>
-          {teachingOpen && <div className="teaching-grid">
+          {teachingOpen && <div className="teaching-grid motion-stagger">
             {teaching.map(([no, title, sub, desc]) => (
               <article className={`teaching-card ${no === '02' ? 'teaching-card--cyanotype' : ''}`} key={no}>
                 <span className="card-no">{no}</span>
@@ -414,11 +443,11 @@ function App() {
         <article className="project-modal" onClick={(event) => event.stopPropagation()}>
           <button className="close-modal" onClick={() => setSelected(null)} aria-label="关闭">×</button>
           <p>{selected.type}</p><span>{selected.no}</span><h2>{selected.title}</h2><h3>{selected.subtitle}</h3><strong>{selected.role}</strong><div className="modal-line" /><p className="modal-desc">{selected.desc}</p>
-          {selected.records ? <div className="modal-records">{selected.records.map((record) => <article key={record.code || record.title}><time>{record.date}</time><div><small>{record.type || record.kind}</small><h4>{record.name || record.title}</h4><p>{record.role}</p></div><b>{record.code || record.result}</b></article>)}</div> : selected.sections ? <div className="project-gallery-groups">{selected.sections.map((section) => <section className="project-gallery-section" key={section.title}><header><h4>{section.title}</h4><p>{section.detail}</p></header><div className="project-gallery">{section.images.map((image, index) => <img key={image} src={image} alt={`${selected.title} · ${section.title} · 照片 ${index + 1}`} onError={(event) => { event.currentTarget.style.display = 'none'; }} />)}</div></section>)}</div> : selected.images && <div className="project-gallery">{selected.images.map((image, index) => <img key={image} src={image} alt={`${selected.title}现场照片 ${index + 1}`} onError={(event) => { event.currentTarget.style.display = 'none'; }} />)}</div>}
+          {selected.records ? <div className="modal-records">{selected.records.map((record) => <article key={record.code || record.title}><time>{record.date}</time><div><small>{record.type || record.kind}</small><h4>{record.name || record.title}</h4><p>{record.role}</p></div><b>{record.code || record.result}</b></article>)}</div> : selected.sections ? <div className="project-gallery-groups">{selected.sections.map((section) => <section className="project-gallery-section" key={section.title}><header><h4>{section.title}</h4><p>{section.detail}</p></header><div className="project-gallery">{section.images.map((image, index) => <img key={image} loading="lazy" decoding="async" src={image} alt={`${selected.title} · ${section.title} · 照片 ${index + 1}`} onError={(event) => { event.currentTarget.style.display = 'none'; }} />)}</div></section>)}</div> : selected.images && <div className="project-gallery">{selected.images.map((image, index) => <img key={image} loading="lazy" decoding="async" src={image} alt={`${selected.title}现场照片 ${index + 1}`} onError={(event) => { event.currentTarget.style.display = 'none'; }} />)}</div>}
           <div className="modal-tags">{selected.tags.map((tag) => <b key={tag}>{tag}</b>)}</div>
         </article>
       </div>}
-    </>
+    </div>
   );
 }
 
