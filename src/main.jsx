@@ -1,10 +1,7 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import React, { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import './style.css?v=20261026-61';
 
-gsap.registerPlugin(ScrollTrigger);
 import CircularCarousel from './CircularCarousel';
 import opening01 from './assets/hero/opening-01.jpg';
 import opening02 from './assets/hero/opening-02.jpg';
@@ -210,7 +207,6 @@ const innovationCertificates = [
 ];
 
 function App() {
-  const appRef = useRef(null);
   const [selected, setSelected] = useState(null);
   const [educationOpen, setEducationOpen] = useState(false);
   const [projectsOpen, setProjectsOpen] = useState(false);
@@ -227,32 +223,10 @@ function App() {
     return () => { document.body.style.overflow = ''; };
   }, [selected]);
 
-  useLayoutEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
-    const ctx = gsap.context(() => {
-      const intro = gsap.timeline({ defaults: { ease: 'power4.out' } });
-      intro
-        .from('.nav', { yPercent: -110, opacity: 0, duration: 1.25, delay: 0.2 })
-        .from('.opening-label span', { yPercent: 140, opacity: 0, stagger: 0.16, duration: 1.25 }, '-=0.78')
-        .from('.opening-cylinder', { scale: 0.66, rotateX: 20, y: 80, opacity: 0, duration: 1.85, ease: 'expo.out' }, '-=0.95')
-        .from('.opening-intro', { y: 26, opacity: 0, duration: 0.9 }, '-=0.72');
-      gsap.from('.hero-content > *', { yPercent: 125, scaleY: 1.16, opacity: 0, transformOrigin: '0 100%', stagger: 0.14, duration: 1.25, ease: 'power4.out', scrollTrigger: { trigger: '.hero', start: 'top 60%' } });
-      gsap.from('.hero-photo-orb', { clipPath: 'inset(50% 0 50% 0 round 50%)', scale: 1.35, duration: 1.55, ease: 'power4.inOut', scrollTrigger: { trigger: '.hero', start: 'top 65%' } });
-      gsap.utils.toArray('main > section').forEach((section) => {
-        const heading = section.querySelector('h2');
-        const label = section.querySelector('.section-label');
-        if (heading) gsap.from(heading, { xPercent: -24, yPercent: 50, scaleX: 0.72, transformOrigin: '0 100%', opacity: 0, duration: 1.35, ease: 'power4.out', scrollTrigger: { trigger: section, start: 'top 72%', once: true } });
-        if (label) gsap.from(label, { y: 36, opacity: 0, duration: 0.8, ease: 'power3.out', scrollTrigger: { trigger: section, start: 'top 76%', once: true } });
-      });
-      gsap.utils.toArray('.hero-photo-orb img, .avatar-frame').forEach((image) => {
-        gsap.to(image, { yPercent: -7, ease: 'none', scrollTrigger: { trigger: image, start: 'top bottom', end: 'bottom top', scrub: 1.15 } });
-      });
-    }, appRef);
-    return () => ctx.revert();
-  }, []);
+
 
   return (
-    <div ref={appRef} className="app-motion-root">
+    <div className="app-motion-root">
       <header className="nav">
         <a className="brand" href="#top" aria-label="首页">
           <span className="brand-mark">LJY</span>
