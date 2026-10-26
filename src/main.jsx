@@ -2,7 +2,7 @@ import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { createRoot } from 'react-dom/client';
-import './style.css?v=20261026-60';
+import './style.css?v=20261026-61';
 
 gsap.registerPlugin(ScrollTrigger);
 import CircularCarousel from './CircularCarousel';
